@@ -220,7 +220,7 @@ trait Operators {
   /** Returns an n-by-n matrix of all ones. */
   def ones(n: Int) = Matrix.ones(n, n)
   /** Returns an m-by-n matrix of all ones. */
-  def ones(m: Int, n: Int) = Matrix.zeros(m, n)
+  def ones(m: Int, n: Int) = Matrix.ones(m, n)
   /** Returns an n-by-n identity matrix. */
   def eye(n: Int) = Matrix.eye(n)
   /** Returns an m-by-n identity matrix. */
