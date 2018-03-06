@@ -579,10 +579,26 @@ trait Operators {
     * @param splitRule the splitting rule.
     * @return Decision tree model.
     */
-  def cart(x: Array[Array[Double]], y: Array[Int], maxNodes: Int, attributes: Array[Attribute] = null, splitRule: DecisionTree.SplitRule = DecisionTree.SplitRule.GINI): DecisionTree = {
+  def cart(x: Array[Array[Double]], y: Array[Int], maxNodes: Int, nodeSize:Int = 1, attributes: Array[Attribute] = null, splitRule: DecisionTree.SplitRule = DecisionTree.SplitRule.GINI): DecisionTree = {
     val attr = Option(attributes).getOrElse(numericAttributes(x(0).length))
     time {
-      new DecisionTree(attr, x, y, maxNodes, splitRule)
+      new DecisionTree(attr, x, y, maxNodes, nodeSize, splitRule)
+    }
+  }
+
+  def sslcart(x: Array[Array[Double]], y: Array[Int], maxNodes: Int, nodeSize:Int, attributes: Array[Attribute] = null,
+    splitRule: SemiSupervisedDecisionTree.SplitRule = SemiSupervisedDecisionTree.SplitRule.GINI): SemiSupervisedDecisionTree = {
+    val attr = Option(attributes).getOrElse(numericAttributes(x(0).length))
+    time {
+
+      // the underlying CRE assumes that the labeled data comes first in full, followed by the unlabeled data.
+      // the unlabeled data is assumed to have '0' as label.
+      // a binary classification problem is expected to be indexed '1' and '2' instead of '-1' and '+1'.
+      val dataSorted = y.zip(x).sortBy(_._1).reverse
+      val x1 = dataSorted.map(_._2)
+      val y1 = dataSorted.map(_._1)
+
+      new SemiSupervisedDecisionTree(x1, y1, maxNodes, nodeSize, splitRule)
     }
   }
 
